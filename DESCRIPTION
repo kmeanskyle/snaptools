@@ -1,0 +1,22 @@
+Package: snaptools
+Type: Package
+Title: Tools For Working With SNAP Data Products
+Version: 0.0.0.9000
+Authors@R: person("Kyle", "Redilla", email = "kmeanskyle@gmail.com", 
+             role = c("aut", "cre"))
+Description: Tools for working with the output of GCM/reanalysis data 
+    downscaled to the US state of Alaska and surrounding regions using 
+    the Weather Research and Forecasting model.
+License: MIT + file LICENSE
+URL: https://github.com/kmeanskyle/snaptools
+Encoding: UTF-8
+LazyData: true
+Depends:
+    R (>= 3.2.0)
+Imports:
+    ncdf4,
+    raster,
+    sp
+Suggests: 
+    testthat
+RoxygenNote: 6.1.1
