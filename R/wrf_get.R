@@ -40,7 +40,7 @@ wrf_get <- function(nc_fns, coords, shift = NULL) {
   var_eq <- function() {
     vars <- lapply(nc_fns, function(x) {
       nc <- ncdf4::nc_open(x)
-      var <- nc$var$t2min$name
+      var <- nc$var[[1]]$name
       ncdf4::nc_close(nc)
       var
     })
@@ -86,9 +86,9 @@ wrf_get <- function(nc_fns, coords, shift = NULL) {
   # shift ijs
   if(!is.null(shift)){
     wrf_ijs[, 1] <- wrf_ijs[, 1] + shift[1]
-    wrf_ijs[, 2] <- wrf_ijs[, 2] + shift[2]
+    wrf_ijs[, 2] <- wrf_ijs[, 2] - shift[2]
   }
-  wrf_ijs <- split(, row(coords))
+  wrf_ijs <- split(wrf_ijs, row(coords))
   df <- do.call("rbind", lapply(nc_fns, wrap_ncvar_get, wrf_ijs))
   cols <- eval(var)
   n <- ncol(df)
