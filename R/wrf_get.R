@@ -25,7 +25,7 @@ wrf_cells <- function(coords) {
 #' Access the "Historical and Projected Dynamically Downscaled Climate Data
 #' for the State of Alaska and surrounding regions" datasets produced by SNAP
 #'
-#' @param nc_fn A netcdf file name (path) containing the downscaled data,
+#' @param nc_fns A netcdf file name (path) containing the downscaled data,
 #' or vector of such filenames
 #' @param coords A two_variable data.frame of WGS84 coordinates
 #' @examples
@@ -36,7 +36,7 @@ wrf_cells <- function(coords) {
 #' fn <- "t2min_daily_wrf_GFDL-CM3_historical_1979.nc"
 #' wrf_get(fn, "t2min", nome)
 #' @export
-wrf_get <- function(nc_fns, coords) {
+wrf_get <- function(nc_fns, coords, shift = NULL) {
   var_eq <- function() {
     vars <- lapply(nc_fns, function(x) {
       nc <- ncdf4::nc_open(x)
@@ -82,7 +82,13 @@ wrf_get <- function(nc_fns, coords) {
 
   var <- var_eq()
   if(var == FALSE) stop()
-  wrf_ijs <- split(wrf_cells(coords), row(coords))
+  wrf_ijs <- wrf_cells(coords)
+  # shift ijs
+  if(!is.null(shift)){
+    wrf_ijs[, 1] <- wrf_ijs[, 1] + shift[1]
+    wrf_ijs[, 2] <- wrf_ijs[, 2] + shift[2]
+  }
+  wrf_ijs <- split(, row(coords))
   df <- do.call("rbind", lapply(nc_fns, wrap_ncvar_get, wrf_ijs))
   cols <- eval(var)
   n <- ncol(df)
