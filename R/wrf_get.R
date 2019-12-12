@@ -28,7 +28,9 @@ wrf_cells <- function(coords) {
 #'
 #' @param nc_fns A netcdf file name (path) containing the downscaled data,
 #' or vector of such filenames
-#' @param coords A two_variable data.frame of WGS84 coordinates
+#' @param coords A two-variable data.frame of WGS84 coordinates
+#' @param shift A vector of horizontal (1st element) and vertical (2nd element) grid cell positions to shift before querying WRF output
+#' @param rc A logical arg indicating whether supplied coords are row/column values
 #' @examples
 #' #
 #' # coordinates for Nome, AK
