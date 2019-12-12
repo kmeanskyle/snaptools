@@ -2,14 +2,15 @@
 #
 # coords should be a data.frame with longitude, latitude as the two variables
 wrf_cells <- function(coords) {
-  # determine if matrix of wgs84 coords is valid and in the wrf grid
   # planned error messages:
-  #   invalid coordinate(s): one or more longitude or latitudes is outside of allowable range
   #   not in WRF gird: one or more points falls outside of the downscaled grid (could just be a warning too that returns data for valid points)
   #
 
-  is.data.frame(coords)
-  abs(coords[, 1]) <= 180 & abs(coords[, 2]) <= 90
+  if(!is.data.frame(coords))
+    stop("Please supply coordinates as a data.frame")
+
+  if(!all(abs(coords[, 1]) <= 180 & abs(coords[, 2]) <= 90))
+    stop("Invalid coordinate values, latitude should be between -90 and 90, longitude between -180 and 180")
 
   coords_sp <- sp::SpatialPoints(coords, sp::CRS("+init=epsg:4326"))
   coords_sp <- sp::spTransform(coords_sp, sp::CRS(wrf_proj_str))
@@ -36,7 +37,16 @@ wrf_cells <- function(coords) {
 #' fn <- "t2min_daily_wrf_GFDL-CM3_historical_1979.nc"
 #' wrf_get(fn, "t2min", nome)
 #' @export
-wrf_get <- function(nc_fns, coords, shift = NULL) {
+wrf_get <- function(nc_fns,
+                    coords,
+                    shift = NULL,
+                    rc = FALSE) {
+
+  verify_coords <- function() {
+    if(!is.data.frame(rc_df))
+      stop("Please supply coordinates or row/column values as a data.frame")
+  }
+
   var_eq <- function() {
     vars <- lapply(nc_fns, function(x) {
       nc <- ncdf4::nc_open(x)
@@ -45,7 +55,15 @@ wrf_get <- function(nc_fns, coords, shift = NULL) {
       var
     })
     vars <- unique(unlist(vars))
-    if(length(vars) == 1) vars else FALSE
+    if(length(vars) == 1) vars else
+      stop("More than one unique WRF variable detected")
+  }
+
+  verify_rc <- function(coords) {
+    valid <- 1:262
+    if(!all(unlist(rc_df) %in% valid))
+      stop("Invalid row/columns supplied. Valid values are integers in 1:262")
+    coords
   }
 
   mk_tvec <- function(nc) {
@@ -81,8 +99,10 @@ wrf_get <- function(nc_fns, coords, shift = NULL) {
   }
 
   var <- var_eq()
-  if(var == FALSE) stop()
-  wrf_ijs <- wrf_cells(coords)
+  verify_coords()
+
+  wrf_ijs <- if(rc == FALSE) wrf_cells(coords) else verify_rc(coords)
+
   # shift ijs
   if(!is.null(shift)){
     wrf_ijs[, 1] <- wrf_ijs[, 1] + shift[1]
