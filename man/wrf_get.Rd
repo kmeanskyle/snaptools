@@ -11,7 +11,7 @@ wrf_get(nc_fns, coords, shift = NULL, rc = FALSE)
 \item{nc_fns}{A netcdf file name (path) containing the downscaled data,
 or vector of such filenames}
 
-\item{coords}{A two-variable data.frame of WGS84 coordinates}
+\item{coords}{A two-variable data.frame of WGS84 coordinates (columns lon, lat)}
 
 \item{shift}{A vector of horizontal (1st element) and vertical (2nd element) grid cell positions to shift before querying WRF output}
 
