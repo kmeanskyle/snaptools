@@ -5,13 +5,17 @@
 \title{Access the "Historical and Projected Dynamically Downscaled Climate Data
 for the State of Alaska and surrounding regions" datasets produced by SNAP}
 \usage{
-wrf_get(nc_fns, coords)
+wrf_get(nc_fns, coords, shift = NULL, rc = FALSE)
 }
 \arguments{
-\item{coords}{A two_variable data.frame of WGS84 coordinates}
-
-\item{nc_fn}{A netcdf file name (path) containing the downscaled data,
+\item{nc_fns}{A netcdf file name (path) containing the downscaled data,
 or vector of such filenames}
+
+\item{coords}{A two-variable data.frame of WGS84 coordinates}
+
+\item{shift}{A vector of horizontal (1st element) and vertical (2nd element) grid cell positions to shift before querying WRF output}
+
+\item{rc}{A logical arg indicating whether supplied coords are row/column values}
 }
 \description{
 Access the "Historical and Projected Dynamically Downscaled Climate Data
