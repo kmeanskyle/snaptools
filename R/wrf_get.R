@@ -1,10 +1,10 @@
-# determine wrf cell indices for particular vector of WGS84 coordinates
-#
-# coords should be a data.frame with longitude, latitude as the two variables
+#' Determine cells in WRF grid corresponding to supplied data.frame of coordinates
+#'
+#' @param A two-variable data.frame of WGS84 coordinates (columns lon, lat)
+#' @export
 wrf_cells <- function(coords) {
   # planned error messages:
   #   not in WRF gird: one or more points falls outside of the downscaled grid (could just be a warning too that returns data for valid points)
-  #
 
   if(!is.data.frame(coords))
     stop("Please supply coordinates as a data.frame")
@@ -28,7 +28,7 @@ wrf_cells <- function(coords) {
 #'
 #' @param nc_fns A netcdf file name (path) containing the downscaled data,
 #' or vector of such filenames
-#' @param coords A two-variable data.frame of WGS84 coordinates
+#' @param coords A two-variable data.frame of WGS84 coordinates (columns lon, lat)
 #' @param shift A vector of horizontal (1st element) and vertical (2nd element) grid cell positions to shift before querying WRF output
 #' @param rc A logical arg indicating whether supplied coords are row/column values
 #' @examples
