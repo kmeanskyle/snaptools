@@ -18,7 +18,8 @@ mk_wrf_mask <- function(anc_fn, sam_fn) {
   list(
     raster::raster(
       apply(t(mask), 2, rev),
-      xmn = ext[1], xmx = ext[2], ymn = ext[3], ymx = ext[4]
+      xmn = ext[1], xmx = ext[2], ymn = ext[3], ymx = ext[4],
+      crs = proj_str
     ),
     proj_str,
     list(xc = xc, yc = yc)
@@ -81,6 +82,11 @@ truth$fairbanks <- mk_wrf_data(sam_fn, ak_coords[2, ])
 truth$utqiagvik <- mk_wrf_data(sam_fn, ak_coords[3, ])
 truth$juneau <- mk_wrf_data(sam_fn, ak_coords[4, ])
 
+#------------------------------------------------------------------------------
+
+
+
+#-- Use data ------------------------------------------------------------------
 # save the following for internal use:
 # land mask for grid
 # proj4 string for grid
