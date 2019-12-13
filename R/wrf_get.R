@@ -1,8 +1,9 @@
-#' Determine cells in WRF grid corresponding to supplied data.frame of coordinates
+#' Determine row/columns of cells in WRF grid corresponding to supplied data.frame of coordinates
 #'
-#' @param A two-variable data.frame of WGS84 coordinates (columns lon, lat)
+#' @param coords A two-variable data.frame of WGS84 coordinates (columns lon, lat)
+#' @param tr return the row/cols from transposed grid
 #' @export
-wrf_cells <- function(coords) {
+wrf_cells <- function(coords, tr = TRUE) {
   # planned error messages:
   #   not in WRF gird: one or more points falls outside of the downscaled grid (could just be a warning too that returns data for valid points)
 
@@ -20,7 +21,7 @@ wrf_cells <- function(coords) {
   }
   cell <- raster::cellFromXY(wrf_mask, coords_sp)
   row_col <- raster::rowColFromCell(cell, object = wrf_mask)
-  sw_cols(row_col)
+  if(tr) sw_cols(row_col) else row_col
 }
 
 #' Access the "Historical and Projected Dynamically Downscaled Climate Data
@@ -120,3 +121,31 @@ wrf_get <- function(nc_fns,
   names(df) <- cols
   df
 }
+
+#' return df of x, y values of centerpoints of square grid of size (n*2 + 1)^2 centered on coords
+#'
+#' @param coords A pair of lon/lat coords (if data.frame, first row will be used)
+#' @param n Whole number specifying size of desired grid (square with (n*2 + 1)^2 cells)
+#' @param ret_mask Logical specifying whether to return the land mask values
+#'
+#' @export
+wrf_xy <- function(coords, n = 2, ret_mask = FALSE) {
+  # cells are numbered left-to-right, top-to-bottom
+  #   need to transform row, col to cell #
+  #
+  cells_from_ij <- function(ij) {
+    l <- 262
+    foc_cell <- ij[2] + l * (ij[1] - 1)
+    ext <- -n:n
+    r_ext <- foc_cell + ext
+    unlist(lapply(r_ext, function(x) x + ext * l))
+  }
+
+  wrf_ij <- wrf_cells(coords, tr = FALSE)
+  cells <- cells_from_ij(wrf_ij)
+  xy <- as.data.frame(raster::xyFromCell(wrf_mask, cells))
+
+  if(ret_mask) xy$mask <- wrf_mask[cells]
+  xy
+}
+

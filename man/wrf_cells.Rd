@@ -2,13 +2,15 @@
 % Please edit documentation in R/wrf_get.R
 \name{wrf_cells}
 \alias{wrf_cells}
-\title{Determine cells in WRF grid corresponding to supplied data.frame of coordinates}
+\title{Determine row/columns of cells in WRF grid corresponding to supplied data.frame of coordinates}
 \usage{
-wrf_cells(coords)
+wrf_cells(coords, tr = TRUE)
 }
 \arguments{
-\item{A}{two-variable data.frame of WGS84 coordinates (columns lon, lat)}
+\item{coords}{A two-variable data.frame of WGS84 coordinates (columns lon, lat)}
+
+\item{tr}{return the row/cols from transposed grid}
 }
 \description{
-Determine cells in WRF grid corresponding to supplied data.frame of coordinates
+Determine row/columns of cells in WRF grid corresponding to supplied data.frame of coordinates
 }
