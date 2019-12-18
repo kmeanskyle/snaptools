@@ -45,10 +45,10 @@ wrf_get <- function(nc_fns,
                     shift = NULL,
                     rc = FALSE) {
 
-  verify_coords <- function() {
-    if(!is.data.frame(rc_df))
-      stop("Please supply coordinates or row/column values as a data.frame")
-  }
+  #verify_coords <- function() {
+  #  if(!is.data.frame(rc_df))
+  #    stop("Please supply coordinates or row/column values as a data.frame")
+  #}
 
   var_eq <- function() {
     vars <- lapply(nc_fns, function(x) {
@@ -102,7 +102,7 @@ wrf_get <- function(nc_fns,
   }
 
   var <- var_eq()
-  verify_coords()
+  #verify_coords()
 
   wrf_ijs <- if(rc == FALSE) wrf_cells(coords) else verify_rc(coords)
 
@@ -149,3 +149,18 @@ wrf_xy <- function(coords, n = 2, ret_mask = FALSE) {
   xy
 }
 
+#' Transform coordinates to WRF projection
+#'
+#' @param coords a data.frame of lon, lat coordinates
+#' @param epsg An EPSG code for projection of input coordinates
+#' @param proj4str a PROJ4 string (must be supplied if epsg isn't)
+#'
+#' @export
+wrf_transform <- function(coords, epsg = 4326, proj4str = NULL) {
+  if(is.null(epsg) & is.null(proj4str))
+    stop("Input coordinates must have crs provided by epsg or proj4str args")
+
+  coords_sp <- sp::SpatialPoints(coords, sp::CRS("+init=epsg:4326"))
+  coords_sp <- sp::spTransform(coords_sp, sp::CRS(wrf_proj_str))
+  as.data.frame(coords_sp)
+}
