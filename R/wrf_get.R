@@ -33,6 +33,7 @@ wrf_cells <- function(coords, tr = TRUE) {
 #' @param shift A vector of horizontal (1st element) and vertical (2nd element) grid cell positions to shift before querying WRF output
 #' @param rc A logical arg indicating whether supplied coords are row/column values
 #' @param use_par Logical indicating parallel::mclapply should be used internally
+#' @param cores Number of cores ot use if use_par = TRUE
 #' @examples
 #' #
 #' # coordinates for Nome, AK
@@ -45,7 +46,8 @@ wrf_get <- function(nc_fns,
                     coords,
                     shift = NULL,
                     rc = FALSE,
-                    use_par = FALSE) {
+                    use_par = FALSE,
+                    cores = NULL) {
 
   #verify_coords <- function() {
   #  if(!is.data.frame(rc_df))
@@ -115,12 +117,11 @@ wrf_get <- function(nc_fns,
   }
   wrf_ijs <- split(wrf_ijs, row(coords))
   if(use_par) {
-    num_cores <- parallel::detectCores()
     df <- do.call(
       "rbind",
       parallel::mclapply(
         nc_fns, wrap_ncvar_get, wrf_ijs,
-        mc.cores = num_cores
+        mc.cores = cores
       )
     )
   } else {
