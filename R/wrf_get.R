@@ -43,7 +43,8 @@ wrf_cells <- function(coords, tr = TRUE) {
 wrf_get <- function(nc_fns,
                     coords,
                     shift = NULL,
-                    rc = FALSE) {
+                    rc = FALSE,
+                    use_par = FALSE) {
 
   #verify_coords <- function() {
   #  if(!is.data.frame(rc_df))
@@ -112,7 +113,18 @@ wrf_get <- function(nc_fns,
     wrf_ijs[, 2] <- wrf_ijs[, 2] - shift[2]
   }
   wrf_ijs <- split(wrf_ijs, row(coords))
-  df <- do.call("rbind", lapply(nc_fns, wrap_ncvar_get, wrf_ijs))
+  if(use_par) {
+    df <- do.call(
+      "rbind",
+      parallel::mclapply(
+        nc_fns, wrap_ncvar_get, wrf_ijs,
+        mc.cores = parallel::detectCores()
+      )
+    )
+  } else {
+    df <- do.call("rbind", lapply(nc_fns, wrap_ncvar_get, wrf_ijs))
+  }
+
   cols <- eval(var)
   n <- ncol(df)
   if(n > 1) {
