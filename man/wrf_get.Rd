@@ -5,7 +5,7 @@
 \title{Access the "Historical and Projected Dynamically Downscaled Climate Data
 for the State of Alaska and surrounding regions" datasets produced by SNAP}
 \usage{
-wrf_get(nc_fns, coords, shift = NULL, rc = FALSE)
+wrf_get(nc_fns, coords, shift = NULL, rc = FALSE, use_par = FALSE)
 }
 \arguments{
 \item{nc_fns}{A netcdf file name (path) containing the downscaled data,
@@ -16,6 +16,8 @@ or vector of such filenames}
 \item{shift}{A vector of horizontal (1st element) and vertical (2nd element) grid cell positions to shift before querying WRF output}
 
 \item{rc}{A logical arg indicating whether supplied coords are row/column values}
+
+\item{use_par}{Logical indicating parallel::mclapply should be used internally}
 }
 \description{
 Access the "Historical and Projected Dynamically Downscaled Climate Data

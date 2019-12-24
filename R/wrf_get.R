@@ -32,6 +32,7 @@ wrf_cells <- function(coords, tr = TRUE) {
 #' @param coords A two-variable data.frame of WGS84 coordinates (columns lon, lat)
 #' @param shift A vector of horizontal (1st element) and vertical (2nd element) grid cell positions to shift before querying WRF output
 #' @param rc A logical arg indicating whether supplied coords are row/column values
+#' @param use_par Logical indicating parallel::mclapply should be used internally
 #' @examples
 #' #
 #' # coordinates for Nome, AK
@@ -114,11 +115,12 @@ wrf_get <- function(nc_fns,
   }
   wrf_ijs <- split(wrf_ijs, row(coords))
   if(use_par) {
+    num_cores <- parallel::detectCores()
     df <- do.call(
       "rbind",
       parallel::mclapply(
         nc_fns, wrap_ncvar_get, wrf_ijs,
-        mc.cores = parallel::detectCores()
+        mc.cores = num_cores
       )
     )
   } else {
